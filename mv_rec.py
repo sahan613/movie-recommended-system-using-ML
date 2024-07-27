@@ -1,3 +1,4 @@
+import pickle
 from sklearn.metrics.pairwise import cosine_similarity
 import nltk
 from nltk.stem.porter import PorterStemmer
@@ -128,4 +129,26 @@ vectors = cv.fit_transform(new_df['tags']).toarray()
 
 similarities = cosine_similarity(vectors)
 
-print(list(enumerate(similarities[0])))
+# print(list(enumerate(similarities[0])))
+
+# print(new_df['title'])
+# print(new_df[new_df['title'] == 'Shanghai Calling'].index[0])
+
+'''print(sorted(list(enumerate(similarities[0])),
+reverse = True, key = lambda x: x[1])[1:6])'''
+
+
+def recommend(movie):
+    movie_index = new_df[new_df['title'] == movie].index[0]
+    distances = similarities[movie_index]
+    movies_list = sorted(list(enumerate(distances)),
+                         reverse=True, key=lambda x: x[1])[1:6]
+    for i in movies_list:
+        print(new_df.iloc[i[0]].title)
+
+
+# recommend('Batman Begins')
+
+pickle.dump(new_df.to_dict(), open('movies_dict.pkl', 'wb'))
+
+pickle.dump(similarities, open('Similariti.pkl', 'wb'))
